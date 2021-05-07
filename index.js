@@ -38,7 +38,7 @@ const { overwriteRandom } = require('./lib/overwrite-random');
 const { promiseLoop, getBrowserFrames, stringArrayFind } = require('./lib/utils');
 
 
-module.exports = function (config) {
+module.exports = function (config, pageContent) {
   config = Object.assign({}, config || {});
   var url = config.url || 'index.html';
   var delayMs = 1000 * (config.start || 0);
@@ -118,8 +118,9 @@ module.exports = function (config) {
     }
   };
 
-  return getBrowser(config, launchOptions).then(function (browser) {
-    return browser.newPage().then(function (page) {
+  return getBrowser(config, launchOptions)
+  .then(function (browser) {
+    return browser.newPage(pageContent).then(function (page) {
       // A marker is an action at a specific time
       var markers = [];
       var markerId = 0;
@@ -172,8 +173,9 @@ module.exports = function (config) {
         if (typeof config.navigatePageToURL === 'function') {
           return config.navigatePageToURL({ page, url, log });
         } else {
-          log('Going to ' + url + '...');
-          return page.goto(url, { waitUntil: 'networkidle0' });
+          log('Setting page content');
+          return page.setContent(pageContent, { waitUntil: 'networkidle0' });
+          //return page.goto(url, { waitUntil: 'networkidle0' });
         }
       }).then(function () {
         log('Page loaded');
