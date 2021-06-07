@@ -101,7 +101,8 @@ module.exports = function (config, pageContent) {
     dumpio: !config.quiet && !config.logToStdErr,
     headless: (config.headless !== undefined ? config.headless : true),
     executablePath: config.executablePath,
-    args: config.launchArguments || []
+    args: config.launchArguments || [],
+    ...config.puppeteerLaunchParams
   };
 
   const getBrowser = function (config, launchOptions) {
